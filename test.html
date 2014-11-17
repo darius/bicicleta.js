@@ -40,52 +40,6 @@ document.onkeypress = function(e) {
 
 // Older test scaffolding follows, not currently used.
 
-function mkMethodCall(e, slot, args) {
-    return mkCall(mkSelflessExtend(e, null, args), '$()'); // wtf? doesn't use slot
-}
-function mkApp1(e, arg) {
-    return mkCall(mkExtend(e, null, {'$arg1': arg}), '$()');
-}
-function add(e1, e2) {
-    return mkApp1(mkCall(e1, '$+'), e2);
-}
-var a = mkLit(42);
-var b = add(a, a);
-
-var c = mkCall(mkExtend(mkLit(rootBob), 'main',  // XXX '$main'
-                        {'$three': mkExtend(mkLit(rootBob), 'me',
-                                            {'$x': mkLit(3),
-                                             '$xx': add(mkCall(mkVar('me'), '$x'),
-                                                        mkCall(mkVar('me'), '$x'))}),
-                         '$four': mkExtend(mkCall(mkVar('main'), '$three'), null,
-                                           {'$x': mkLit(4)}),
-                         '$result': add(mkCall(mkCall(mkVar('main'), '$three'), '$xx'),
-                                        mkCall(mkCall(mkVar('main'), '$four'), '$xx'))}),
-               '$result');
-
-var buggy_broken_fac_env_sorry = 
-    mkExtend(mkLit(rootBob), '$env',
-             {'$fac':
-              mkExtend(mkLit(rootBob), '$fac',
-                       {'$n': mkLit(0),
-                        '$()': mkMethodCall(mkMethodCall(mkCall(mkVar('$fac'), '$n'),
-                                                         '$==',
-                                                         {'$arg1': mkLit(0)}),
-                                            '$if',
-                                            {'$so': mkLit(1),
-                                             '$else': mkMethodCall(mkCall(mkVar('$fac'), '$n'),
-                                                                   '$*',
-                                                                   {'$arg1': mkMethodCall(mkVar('$env'),
-                                                                                          '$fac',
-                                                                                          {'$n': mkMethodCall(mkCall(mkVar('$fac'), '$n'),
-                                                                                                              '$-',
-                                                                                                              {'$arg1': mkLit(1)})})})})})});
-var buggy_fac_example = mkCall(mkCall(buggy_broken_fac_env_sorry, '$fac'), '$()');
-var buggy_fac0 = mkMethodCall(mkCall(buggy_broken_fac_env_sorry, '$fac'), '$fac',
-                              {'$n': mkLit(0)});
-
-var fac_4 = mkCall(mkExtend(mkCall(mkExtend(mkLit(rootBob), '$env', {'$fac': mkExtend(mkLit(rootBob), '$fac', {'$()': mkCall(mkExtend(mkCall(mkCall(mkExtend(mkCall(mkCall(mkVar('$fac'), '$n'), '$=='), null, {'$arg1': mkLit(0)}), '$()'), '$if'), null, {'$so': mkLit(1), '$else': mkCall(mkExtend(mkCall(mkCall(mkVar('$fac'), '$n'), '$*'), null, {'$arg1': mkCall(mkExtend(mkCall(mkVar('$env'), '$fac'), null, {'$n': mkCall(mkExtend(mkCall(mkCall(mkVar('$fac'), '$n'), '$-'), null, {'$arg1': mkLit(1)}), '$()')}), '$()')}), '$()')}), '$()')})}), '$fac'), null, {'$n': mkLit(4)}), '$()');
-
 function makeFac(n) {
     var text = "{env:                                                    \n\
  fac = {fac:   # fac for factorial                                       \n\
