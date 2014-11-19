@@ -98,11 +98,25 @@ function extendK(bob, methods, k) {
 
 var rootBob = makeBob(null, {}); // XXX just null would do, right?
 
+function makePrimCall(receiver) {
+    // TODO do it like "new PrimCall" to make this cheaper
+    return {receiver: receiver,
+            parent: rootBob,
+            methods: {'$()': function(me, doing, k) { // XXX checkme
+                return call(doing, '$arg1', [prim_call_k, me, k]); }}};
+}
+function prim_call_k(arg1, me, k) {
+    if (typeof(arg1) !== 'string')
+        throw new Error("Non-string slot: " + arg1);
+    return call(me.receiver, '$'+arg1, k);
+}
+
 var mirandaMethods = {
     '$is_number': function(_, me, k) { return [k, false]; },
     '$is_string': function(_, me, k) { return [k, false]; },
-    '$repr':      function(_, me, k) { return [k, '<Bob XXX>']; },
-    '$str':       function(_, me, k) { return [k, '<Bob XXX>']; },
+    '$repr':      function(_, me, k) { return [k, ''+me]; }, // XXX improve me
+    '$str':       function(_, me, k) { return [k, ''+me]; }, // XXX improve me
+    '$reflective slot value': function(_, me, k) { return [k, makePrimCall(me)]; },
 };
 
 
