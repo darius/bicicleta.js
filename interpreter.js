@@ -16,6 +16,10 @@ e  = {type: 'variable',
 The env is a JS object with a key for each variable in scope. The key
 is '$' + the variable's name. (The parser already adds the '$', we
 don't have to.)
+
+TODO: represent the AST as objects, so then the case dispatch wouldn't
+be a switch statement on a string -- I figure JS is better optimized
+for objects.
 */
 
 function evaluate(e, env, k) {
@@ -33,10 +37,17 @@ function evaluate(e, env, k) {
         return evaluate(e.receiver, env, [call, e.slot, k]);
 
     case 'extend': {
+        // TODO: I guess we could use for..in loops? And that'd be faster?
         var methods = {};
-        Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
-            methods[slot] = makeSelfishMethod(e.bindings[slot], e.name, env);
-        });
+        // Two cases, just for efficiency.
+        if (e.name === null)
+            Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
+                methods[slot] = makeSelflessMethod(e.bindings[slot], env);
+            });
+        else
+            Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
+                methods[slot] = makeSelfishMethod(e.bindings[slot], e.name, env);
+            });
         return evaluate(e.base, env, [extendK, methods, k]);
     }
     default:
@@ -47,6 +58,12 @@ function evaluate(e, env, k) {
 
 function extendK(bob, methods, k) {
     return [k, makeBob(bob, methods)];
+}
+
+function makeSelflessMethod(e, env) {
+    return function(_, bob, k) {
+        return evaluate(e, env, k);
+    };
 }
 
 function makeSelfishMethod(e, name, env) {
