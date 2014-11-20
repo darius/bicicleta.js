@@ -14,8 +14,7 @@ Run `make` and open test.html.
 
 (I'm not promising any of this now...)
 
-* a test suite
-* some benchmarks
+* more testing/benchmarks
 * tune the cruder bits of the runtime
 * improve repr/str methods?
 * port the compiler
