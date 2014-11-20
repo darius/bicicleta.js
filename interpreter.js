@@ -12,6 +12,10 @@ e  = {type: 'variable',
       base: e2,
       name: '$me',    // (optional field, may be null)
       bindings: {$slot1: e1, ...}}
+
+The env is a JS object with a key for each variable in scope. The key
+is '$' + the variable's name. (The parser already adds the '$', we
+don't have to.)
 */
 
 function evaluate(e, env, k) {

@@ -68,15 +68,26 @@ function whatsBouncing(k, value) {
     console.log();
 }
 
-// Compute the given slot of a Bicicleta object ('bob'), caching the
-// result. The computation takes two steps: look up the method and
-// then call it. A method is a trampolined JS function(ancestor, bob,
-// k) where ancestor is the object directly holding the method
-// definition, while bob is the 'self', the object we're calling.
-//
-// A Bicicleta object can be either a JS primitive like a number or
-// a string, or a JS object with parent and methods fields.
+// A Bicicleta object ('bob') can be a JS primitive like a number or a
+// string, or else a JS object with parent and methods keys. In the
+// latter case, slot values are cached directly as keys of the object,
+// when first computed. The slot name always has a '$' prepended, in
+// the cache, the methods table, the argument to call(), and the AST.
+// (This is of course to avoid clashing with keys used by the
+// implementation or by JS.) The root parent is null.
+
+// Compute the given slot of a Bicicleta object, caching the result
+// unless bob is primitive. The computation takes two steps: look up
+// the method and then call it. A method is a trampolined JS
+// function(ancestor, bob, k) where ancestor is the object directly
+// holding the method definition, while bob is the 'self', the object
+// we're calling.
 function call(bob, slot, k) {
+    // This implementation could avoid breaking out the mirandaMethods
+    // case, if the contents of mirandaMethods were added to every
+    // primitive-type methods table and to rootBob's. But it's simpler
+    // and more robust to keep them in one place, albeit probably
+    // slower.
     var value, ancestor, method;
     if (typeof(bob) === 'object') {
         value = bob[slot];
