@@ -6,29 +6,30 @@ function assert(claim, plaint) {
 // The trampoline reifies execution state to avoid stack overflow and
 // perhaps also to help support a debugging UI. To work with this,
 // functions must be written in 'trampolined style': 
-//   function f(argument, freeVariable, continuation) {
+//   function fn(argument, freeVariable, continuation) {
 //       ...
 //       return [maybeAnotherContinuation, value];
 //   }
-// A state is a pair [continuation, value], so f here returns a state.
+// A state is a pair [continuation, value], so fn here returns a state.
+// The state represents the action "call the continuation with the value".
 // 
-// A continuation k is either null (for the top level) or a triple
-// [fn, freeVar, k] which represents the function 
-//     result => fn(result, freeVar, k)
-// where result is the argument to the continuation, and fn should
+// A continuation k is either null (for the top level: "return the value")
+// or a triple [fn, freeVariable, k] which represents the function 
+//     value => fn(value, freeVariable, k)
+// where value is the argument to the continuation, and fn should
 // return a state, as above.
 // 
 // The freeVariable argument is technically unnecessary to this
 // protocol, since JS has closures: instead of passing different
-// free-variable values to the same function, you could a different
-// closure for each. So why do we have it? The minor reason is speed:
-// this might need less consing, but I haven't measured it. The real
-// reason is so continuations are fully inspectable. You should be
-// able to take a continuation and walk back up its stack and
-// understand what it's waiting to do at every level. There should be
-// a finite set of possible functions that might appear in the fn
-// position, so a debugger can look it up and present to the user
-// something meaningful using the freeVar value.
+// free-variable values to the same function, you could create a
+// different closure for each. So why do we have it? The minor reason
+// is speed: this might need less consing, but I haven't measured
+// it. The real reason is so continuations are fully inspectable. You
+// should be able to take a continuation and walk back up its 'stack'
+// and understand what it's waiting to do at every level. There should
+// be a finite set of possible functions that might appear in the fn
+// position, so a debugger can look one up and thereby know how to
+// present the corresponding freeVar to the user.
 //
 // I had some thoughts about interpreter/compiler interoperability
 // too, but I'd need to see my old notes.
