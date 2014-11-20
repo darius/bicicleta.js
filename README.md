@@ -9,3 +9,13 @@ Still to port over: parts of https://github.com/darius/bicicleta.py
 ## Quick start
 
 Run `make` and open test.html.
+
+## TO DO
+
+(I'm not promising any of this now...)
+
+* a test suite
+* some benchmarks
+* tune the cruder bits of the runtime
+* improve repr/str methods?
+* port the compiler
