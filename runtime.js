@@ -24,7 +24,7 @@ function assert(claim, plaint) {
 // free-variable values to the same function, you could create a
 // different closure for each. So why do we have it? The minor reason
 // is speed: this might need less consing, but I haven't measured
-// it. The real reason is so continuations are fully inspectable. You
+// it. The real reason is so continuations are fully inspectable: you
 // should be able to take a continuation and walk back up its 'stack'
 // and understand what it's waiting to do at every level. There should
 // be a finite set of possible functions that might appear in the fn
@@ -32,7 +32,9 @@ function assert(claim, plaint) {
 // present the corresponding freeVar to the user.
 //
 // I had some thoughts about interpreter/compiler interoperability
-// too, but I'd need to see my old notes.
+// too, but I'd need to see my old notes. Also: it'd probably be
+// more efficient with a mutable stack instead of consing up
+// continuations; this way was just easier for me to write.
 // 
 // Pass trace=true to get console logs.
 function trampoline(state, trace) {
