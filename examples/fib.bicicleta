@@ -1,4 +1,4 @@
 {env: fib = {fib: '()' = (fib.arg1 < 2).if(
       so = 1,
       else = env.fib(fib.arg1-1) + env.fib(fib.arg1-2)
-)}}.fib(26)
+)}}.fib(22)

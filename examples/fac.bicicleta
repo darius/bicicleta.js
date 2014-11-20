@@ -1,0 +1,5 @@
+{env: 
+ fac = {fac:   # fac for factorial
+        '()' = (fac.n == 0).if(so = 1,
+                               else = fac.n * env.fac(n = fac.n-1))}
+}.fac(n=5)

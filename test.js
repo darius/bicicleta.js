@@ -52,17 +52,24 @@ document.onkeypress = function(e) {
 }
 
 
-// Older test scaffolding follows, not currently used.
+// Benchmark
 
-function makeFac(n) {
-    return "{env:                                                    \n\
- fac = {fac:   # fac for factorial                                       \n\
-        '()' = (fac.n == 0).if(so = 1,                                   \n\
-                               else = fac.n * env.fac(n = fac.n-1))}     \n\
-}.fac(n=" + n + ")";
+function bench() {
+    return timeRun(examples.fib);
 }
 
-function testMe() {
-    var expr = makeFac("2+3");
-    return topLevelEval(expr);
+function timeRun(program) {
+    var expr = parseProgram(program)[0];
+    return timex(function() {
+        return trampoline(evaluate(expr, globalEnv, null),
+                          false);
+    });
+}
+
+function timex(thunk) {
+    var start = Date.now();
+    var result = thunk();
+    var end = Date.now();
+    console.log('result', result);
+    return end - start;
 }
