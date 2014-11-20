@@ -161,9 +161,9 @@ function makePrimCall(receiver) {
     return {receiver: receiver,
             parent: rootBob,
             methods: {'$()': function(me, doing, k) { // XXX checkme
-                return call(doing, '$arg1', [prim_call_k, me, k]); }}};
+                return call(doing, '$arg1', [primCallK, me, k]); }}};
 }
-function prim_call_k(arg1, me, k) {
+function primCallK(arg1, me, k) {
     if (typeof(arg1) !== 'string')
         throw new Error("Non-string slot: " + arg1);
     return call(me.receiver, '$'+arg1, k);

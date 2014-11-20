@@ -37,7 +37,7 @@ function evaluate(e, env, k) {
         Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
             methods[slot] = makeSelfishMethod(e.bindings[slot], e.name, env);
         });
-        return evaluate(e.base, env, [extend_k, methods, k]);
+        return evaluate(e.base, env, [extendK, methods, k]);
     }
     default:
         console.log('Not an expression', e);
@@ -45,7 +45,7 @@ function evaluate(e, env, k) {
     }
 }
 
-function extend_k(bob, methods, k) {
+function extendK(bob, methods, k) {
     return [k, makeBob(bob, methods)];
 }
 
