@@ -18,6 +18,15 @@ var sysBob = makeBob(rootBob, {
 });
 var globalEnv = {'$sys': sysBob};
 
+// We incorporate these interpreted methods by mutating the primitive
+// method tables, because:
+//   * We want to be able to test the system with just the core
+//     primitives and no library.
+//   * We don't want to slow down the primitive types by extending each
+//     'real' primitive with a bob-wrapper that adds the library methods.
+// 
+// TODO: add some interpreted miranda methods too.
+
 function extendInPlace(methods, overlay) {
     // TODO: deep copy? Shallow is all we need for now.
     Object.getOwnPropertyNames(overlay.methods).forEach(function(slot) {

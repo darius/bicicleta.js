@@ -196,6 +196,10 @@ var booleanMethods = {
 };
 
 
+// In the Python version '+' did double-dispatch, just to make sure
+// that'd work, since I don't know what Kragen wants in detail. Here
+// we just assume arithmetic, etc., is only done on primitives.
+
 function makePrimopMethod(primK) {
     return function(ancestor, me, k) {
         // XXX this could allocate less, using prototypes
