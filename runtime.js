@@ -32,9 +32,14 @@ function assert(claim, plaint) {
 // present the corresponding freeVar to the user.
 //
 // I had some thoughts about interpreter/compiler interoperability
-// too, but I'd need to see my old notes. Also: it'd probably be
-// more efficient with a mutable stack instead of consing up
-// continuations; this way was just easier for me to write.
+// too, but I'd need to see my old notes. The goal was: compiled code
+// should be able to take large bounces before hitting the trampoline,
+// but transparently to the debugger: if you interrupt it, it should
+// be as if you've been interpreting all along.
+// 
+// Also: it'd probably be more efficient with a mutable stack instead
+// of consing up continuations; this way was just easier for me to
+// write.
 // 
 // Pass trace=true to get console logs.
 function trampoline(state, trace) {
