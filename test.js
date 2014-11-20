@@ -57,9 +57,9 @@ document.onkeypress = function(e) {
 function bench() {
     timeExample('fac');
     timeExample('tarai');
-    timeExample('tak');
     timeExample('itersum3');
     timeExample('fib');
+    timeExample('tak');
     timeExample('freezer'); // XXX this fails but only because number-formatting is different
 }
 
@@ -76,7 +76,6 @@ function timeExample(name) {
     if (expected !== undefined && expected !== ''+result) {
         console.log('FAILED', name, dt, '; see badResult');
         badResult = result;
-        return;
     } else if (expected === undefined)
         console.log('Completed', name, dt, result);
     else
