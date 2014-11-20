@@ -3,22 +3,30 @@ Convert the .bicicleta files into a .js that's easy to load.
 (Yes, I should learn the right way to load data files in JS.)
 """
 
-import os
+import glob
 
 def main():
-    print 'var sys = {'
-    for filename in os.listdir('sys'):
-        name = filename.replace('.bicicleta', '')
-        text = open('sys/'+filename).read()
+    gen('sys')
+    gen('examples')
+
+def gen(dirname):
+    print 'var %s = {' % dirname
+    for path in glob.glob(dirname+'/*.bicicleta'):
+        name = path.replace(dirname+'/', '').replace('.bicicleta', '')
+        text = open(path).read()
         print '  %r: %r,' % (name, text)
     print '};'
 
 ## main()
-#. var libs = {
+#. var sys = {
 #.   'bool': '...',
 #.   'number': '...',
 #.   'string': '...',
 #.   'sys': '...',
+#. };
+#. var examples = {
+#.   'fib': '...',
+#.   'freezer': '...',
 #. };
 
 if __name__ == '__main__':
