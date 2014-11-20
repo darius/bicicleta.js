@@ -6,7 +6,7 @@ Convert the .bicicleta files into a .js that's easy to load.
 import os
 
 def main():
-    print 'var libs = {'
+    print 'var sys = {'
     for filename in os.listdir('sys'):
         name = filename.replace('.bicicleta', '')
         text = open('sys/'+filename).read()

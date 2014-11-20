@@ -36,11 +36,11 @@ function extendInPlace(methods, overlay) {
     });
 }
 
-extendInPlace(booleanMethods, topLevelEval(libs.bool));
-extendInPlace(numberMethods,  topLevelEval(libs.number));
-extendInPlace(stringMethods,  topLevelEval(libs.string));
+extendInPlace(booleanMethods, topLevelEval(sys.bool));
+extendInPlace(numberMethods,  topLevelEval(sys.number));
+extendInPlace(stringMethods,  topLevelEval(sys.string));
 
-extendInPlace(sysBob.methods, topLevelEval(libs.sys));
+extendInPlace(sysBob.methods, topLevelEval(sys.sys));
 
 document.onkeypress = function(e) {
     // Intercept ctrl-Y; when you see it, call testRun().
