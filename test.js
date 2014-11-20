@@ -55,21 +55,37 @@ document.onkeypress = function(e) {
 // Benchmark
 
 function bench() {
-    return timeRun(examples.fib);
+    timeExample('fac');
+    timeExample('tarai');
+    timeExample('tak');
+    timeExample('itersum3');
+    timeExample('fib');
+    timeExample('freezer'); // XXX this fails but only because number-formatting is different
 }
 
-function timeRun(program) {
-    var expr = parseProgram(program)[0];
-    return timex(function() {
-        return trampoline(evaluate(expr, globalEnv, null),
-                          false);
+var badResult;
+
+function timeExample(name) {
+    var expr = parseProgram(examples[name])[0];
+    var result;
+    var dt = timex(function() {
+        result = trampoline(evaluate(expr, globalEnv, null),
+                            false);
     });
+    var expected = examples[name+'.expected'];
+    if (expected !== undefined && expected !== ''+result) {
+        console.log('FAILED', name, dt, '; see badResult');
+        badResult = result;
+        return;
+    } else if (expected === undefined)
+        console.log('Completed', name, dt, result);
+    else
+        console.log('OK', name, dt);
 }
 
 function timex(thunk) {
     var start = Date.now();
     var result = thunk();
     var end = Date.now();
-    console.log('result', result);
     return end - start;
 }

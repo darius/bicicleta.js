@@ -1,0 +1,9 @@
+{env:
+ tak = {tak: 
+          '()' = (tak.y < (tak.x)).if(
+              so = env.tak(x=env.tak(x=tak.x-1, y=tak.y, z=tak.z),
+                           y=env.tak(x=tak.y-1, y=tak.z, z=tak.x),
+                           z=env.tak(x=tak.z-1, y=tak.x, z=tak.y)),
+              else = tak.z)
+         }
+    }.tak(x=18, y=12, z=6)

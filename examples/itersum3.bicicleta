@@ -1,0 +1,18 @@
+{env:
+ outer = {outer: 
+   i=0, sum=0,
+   '()' = (outer.i == 0).if(
+       so = outer.sum,
+       else = env.outer(i=outer.i-1, sum=outer.sum + env.mid(i=outer.i)))},
+ mid = {mid: 
+   i=0, sum=0,
+   '()' = (mid.i == 0).if(
+       so = mid.sum,
+       else = env.mid(i=mid.i-1, sum=mid.sum + env.inner(i=mid.i)))},
+ inner = {inner:
+   i=0, sum=0,
+   '()' = (inner.i == 0).if(
+       so = inner.sum,
+       else = env.inner(i=inner.i-1, sum=inner.sum + inner.i))},
+ main = env.outer(i = 40)
+}.main

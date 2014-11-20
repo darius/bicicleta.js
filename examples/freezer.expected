@@ -1,0 +1,44 @@
+<p>Thermal insulators in general conduct heat at
+about 0.04 W/m/K.  Styrofoam is a better
+insulator than some others; it conducts heat at about
+0.033 W/m/K.</p>
+
+<p>So let's consider building an icebox out of styrofoam.  The idea is
+that you put in some ice from some other source every so often, and
+that ice keeps the icebox cold.  If you salt the ice, it will melt
+below the freezing point of pure water, so your icebox can be a
+freezer.</p>
+
+<p>Suppose you want a 2.0 L of salted
+ice in bottles to keep the temperature at -5°C for 24 hours
+at a time.  That means the total heat flux out has to be 2.0 L *
+80 kcal/L over those 24 hours, which is
+6.66666666667 kcal/h.  (That's 7.75333333333 watts.)</p>
+
+<p>Suppose the interior of the freezer is
+250.0 L in a convenient cubical shape; that's a 62.9960524947-cm
+cube, which has 2.38110157795 m² of surface area to lose heat through.
+Suppose the outside air temperature is 35°C, for a
+difference of 40 K.  0.033 W/m/K * 2.38110157795 m² * 40 K / 
+7.75333333333 W = 0.405381008112 m of wall thickness, for a
+total size of 1.44072254117 m, cubed.</p>
+
+<p>That's unwieldy, so suppose
+you're willing to use more ice. Suppose you want a 16.0 L of salted
+ice in bottles to keep the temperature at -5°C for 24 hours
+at a time.  That means the total heat flux out has to be 16.0 L *
+80 kcal/L over those 24 hours, which is
+53.3333333333 kcal/h.  (That's 62.0266666667 watts.)
+0.033 W/m/K * 2.38110157795 m² * 40 K / 
+62.0266666667 W = 0.050672626014 m of wall thickness, for a
+total size of 0.731305776976 m, cubed.  That's 7.64617160485 times smaller.</p>
+
+<p>Suppose that the outside
+temperature is only 23°C on average.  Now, to
+melt the same amount of ice per day, the walls of the icebox that
+melts 2.0 kg of ice per day can be 0.283766705679 m thick, and
+the walls of the smaller icebox that melts 16.0 kg
+of ice per day can be only 0.0354708382098 m thick.
+
+</p>
+

@@ -1,0 +1,9 @@
+{env:
+ tarai = {tarai: 
+          '()' = (tarai.y < (tarai.x)).if(
+              so = env.tarai(x=env.tarai(x=tarai.x-1, y=tarai.y, z=tarai.z),
+                             y=env.tarai(x=tarai.y-1, y=tarai.z, z=tarai.x),
+                             z=env.tarai(x=tarai.z-1, y=tarai.x, z=tarai.y)),
+              else = tarai.y)
+         }
+    }.tarai(x=18, y=12, z=6)
