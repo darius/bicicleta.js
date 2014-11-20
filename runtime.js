@@ -78,6 +78,11 @@ function whatsBouncing(k, value) {
 // the cache, the methods table, the argument to call(), and the AST.
 // (This is of course to avoid clashing with keys used by the
 // implementation or by JS.) The root parent is null.
+//
+// (Representing primitive objects as themselves made a big difference
+// in performance for the Python version. I assume it has the same
+// advantage here.)
+
 
 // Compute the given slot of a Bicicleta object, caching the result
 // unless bob is primitive. The computation takes two steps: look up
