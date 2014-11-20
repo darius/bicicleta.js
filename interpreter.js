@@ -1,24 +1,17 @@
 /*
 Expressions e:
 
-e = {
-     type: 'variable|literal|call|extend',
-
-  // Only for type='variable':
-     name: '$x'
-
-  // Only for type='literal':
-     value: 42
-
-  // Only for type='call':
-     receiver: e1,
-     slot: '$+'
-
-  // Only for type='extend':
-     base: e2,
-     name: '$me',    // (optional field, may be null)
-     bindings: {$slot1: e1, ...}
-    }
+e  = {type: 'variable',
+      name: '$x'}
+   | {type: 'literal',
+      value: 42}
+   | {type: 'call',
+      receiver: e1,
+      slot: '$+'}
+   | {type: 'extend',
+      base: e2,
+      name: '$me',    // (optional field, may be null)
+      bindings: {$slot1: e1, ...}}
 */
 
 function evaluate(e, env, k) {
