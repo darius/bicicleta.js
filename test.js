@@ -60,7 +60,7 @@ function bench() {
     timeExample('itersum3');
     timeExample('fib');
     timeExample('tak');
-    timeExample('freezer'); // XXX this fails but only because number-formatting is different
+    timeExample('freezer');
 }
 
 var badResult;
