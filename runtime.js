@@ -159,13 +159,15 @@ function extendK(bob, methods, k) {
     return [k, makeBob(bob, methods)];
 }
 
-var rootBob = makeBob(null, {}); // XXX just null would do, right?
+var rootBob = null;
 
 function makePrimCall(receiver) {
-    // TODO do it like "new PrimCall" to make this cheaper
+    // TODO use a prototype hoisting the constant receiver and
+    // methods, to make this cheaper. But I don't suppose this is
+    // used often enough to matter.
     return {receiver: receiver,
             parent: rootBob,
-            methods: {'$()': function(me, doing, k) { // XXX checkme
+            methods: {'$()': function(me, doing, k) {
                 return call(doing, '$arg1', [primCallK, me, k]); }}};
 }
 function primCallK(arg1, me, k) {
