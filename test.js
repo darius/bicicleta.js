@@ -74,12 +74,12 @@ function timeExample(name) {
     });
     var expected = examples[name+'.expected'];
     if (expected !== undefined && expected !== ''+result) {
-        console.log('FAILED', name, dt, '; see badResult');
+        console.log('FAILED', dt, name, '; see badResult');
         badResult = result;
     } else if (expected === undefined)
-        console.log('Completed', name, dt, result);
+        console.log('Completed', dt, name, result);
     else
-        console.log('OK', name, dt);
+        console.log('OK', dt, name);
 }
 
 function timex(thunk) {
