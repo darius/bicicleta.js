@@ -202,7 +202,11 @@ var booleanMethods = {
 
 function makePrimopMethod(primK) {
     return function(ancestor, me, k) {
-        // XXX this could allocate less, using prototypes
+        // TODO this could allocate less, using prototypes, since the
+        // parent and methods fields are always the same -- they'd go
+        // in the prototype. I tried this, and it seemed slightly
+        // faster, but I'm not sure since the run-to-run variance is
+        // so high. So let's keep it as a simple object literal for now.
         return [k, {parent: null,
                     methods: primopMethods,
                     primK: primK,
