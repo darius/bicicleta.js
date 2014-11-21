@@ -20,6 +20,7 @@ Run `make` and open test.html.
   like "16.0" instead of "16". Unfortunately the built-in number.toPrecision()
   doesn't help.
 * more testing/benchmarks
-* tune the cruder bits of the runtime
-* improve repr/str methods?
+* the Python interpreter got a good speedup by representing environments as
+  arrays (after statically analyzing scopes) -- i.e. a 'display' environment.
+  Try this for JS too if it seems worthwhile.
 * port the compiler
