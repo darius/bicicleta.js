@@ -8,7 +8,7 @@ function testRun() {
 
 function topLevelEval(text) {
     var expr = parseProgram(text)[0];
-    return trampoline(evaluate(expr, globalEnv, null),
+    return trampoline(expr.evaluate(globalEnv, null),
                       false);
 }
 
@@ -69,7 +69,7 @@ function timeExample(name) {
     var expr = parseProgram(examples[name])[0];
     var result;
     var dt = timex(function() {
-        result = trampoline(evaluate(expr, globalEnv, null),
+        result = trampoline(expr.evaluate(globalEnv, null),
                             false);
     });
     var expected = examples[name+'.expected'];

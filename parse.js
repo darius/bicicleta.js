@@ -55,16 +55,16 @@ var parseProgram = parseGrammar(program_grammar, {
             result = attach(result, arguments[i]);
         return result;
     },
-    VarRef:           function(name)           { return {type: 'variable', name: name}; },
+    VarRef:           mkVar,
     'float':          parseFloat,
     'int':            parseInt,
-    Literal:          function(value)          { return {type: 'literal', value: value}; },
+    Literal:          mkLit,
     attach:           attach,
     defer_dot:        function(name)           { return [mkCall, name]; },
     defer_funcall:    function(bindings)       { return [mkFunCall, '$()', bindings]; },
     defer_squarecall: function(bindings)       { return [mkFunCall, '$[]', bindings]; },
     defer_extend:     function(name, bindings) { return [mkExtend, name, bindings]; },
-    defer_selfless_extend: function(bindings)  { return [mkSelflessExtend, null, bindings]; },
+    defer_selfless_extend: function(bindings)  { return [mkExtend, null, bindings]; },
     name_positions:   function() {
         var result = {};
         for (var i = 0; i < arguments.length; ++i) {
@@ -79,19 +79,9 @@ var parseProgram = parseGrammar(program_grammar, {
     quote:            function(name) { return '$'+name; },
 });
 
-function mkLit(v)        { return {type: 'literal', value: v}; }
-function mkVar(name)     { return {type: 'variable', name: name}; }
-function mkCall(e, slot) { return {type: 'call', receiver: e, slot: slot}; }
-
-function mkExtend(e, name, bindings) {
-    return {type: 'extend', base: e, name: name, bindings: bindings};
-}
-
-var mkSelflessExtend = mkExtend; // for now
-
 function mkFunCall(e, slot, args) {
     //  foo(x=y) ==> foo{x=y}.'()'
-    return mkCall(mkSelflessExtend(e, null, args), slot);
+    return mkCall(mkExtend(e, null, args), slot);
 }
 
 function mkInfix(left, operator, right) {

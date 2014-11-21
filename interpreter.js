@@ -1,68 +1,78 @@
 /*
-Expressions e:
-
-e  = {type: 'variable',
-      name: '$x'}
-   | {type: 'literal',
-      value: 42}
-   | {type: 'call',
-      receiver: e1,
-      slot: '$+'}
-   | {type: 'extend',
-      base: e2,
-      name: '$me',    // (optional field, may be null)
-      bindings: {$slot1: e1, ...}}
-
 The env is a JS object with a key for each variable in scope. The key
 is '$' + the variable's name. (The parser already adds the '$', we
 don't have to.)
 
-TODO: represent the AST as objects, so then the case dispatch wouldn't
-be a switch statement on a string -- I figure JS is better optimized
-for objects.
+TODO: are prototype-based objects faster?
 */
 
-function evaluate(e, env, k) {
-    switch (e.type) {
-    case 'variable': {
-        var value = env[e.name];
-        if (value === undefined)
-            throw new Error("Unbound variable: " + e.name);
-        return [k, value];
-    }
-    case 'literal':
-        return [k, e.value];
+function mkLit(value) {
+    return {
+        toString: function() {
+            return '' + value;
+        },
+        evaluate: function(env, k) {
+            return [k, value];
+        },
+    };
+}
 
-    case 'call':
-        return evaluate(e.receiver, env, [call, e.slot, k]);
+function mkVar(name) {
+    return {
+        toString: function() {
+            return name.slice(1); // TODO: don't require a '$' for mkVar's parameter anymore
+        },
+        evaluate: function(env, k) {
+            var value = env[name];
+            if (value === undefined)
+                throw new Error("Unbound variable: " + name);
+            return [k, value];
+        },
+    };
+}
 
-    case 'extend': {
-        // TODO: I guess we could use for..in loops? And that'd be faster?
-        var methods = {};
-        // Two cases, just for efficiency.
-        if (e.name === null)
-            Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
-                methods[slot] = makeSelflessMethod(e.bindings[slot], env);
-            });
-        else
-            Object.getOwnPropertyNames(e.bindings).forEach(function(slot) {
-                methods[slot] = makeSelfishMethod(e.bindings[slot], e.name, env);
-            });
-        return evaluate(e.base, env, [extendK, methods, k]);
-    }
-    default:
-        console.log('Not an expression', e);
-        throw new Error("Unknown expression type: " + e);
-    }
+function mkCall(receiver, slot) {
+    return {
+        toString: function() {
+            return ''+receiver+'.'+slot.slice(1);
+        },
+        evaluate: function(env, k) {
+            return receiver.evaluate(env, [call, slot, k]);
+        },
+    };
+}
+
+function mkExtend(base, name, bindings) {
+    // Two cases, just for efficiency:
+    var makeMethod = name === null ? makeSelflessMethod : makeSelfishMethod;
+    return {
+        toString: function() {
+            var s = ''+base + '{';
+            if (name) s += name.slice(1) + ': ';
+            var sep = '';
+            for (var slot in bindings) {
+                s += sep + slot.slice(1) + '=' + bindings[slot];
+                sep = ', ';
+            }
+            s += '}'
+            return s;
+        },
+        evaluate: function(env, k) {
+            var methods = {};
+            for (var slot in bindings) // XXX for..in gives us only actual slots, right?
+                methods[slot] = makeMethod(bindings[slot], name, env);
+            return base.evaluate(env, [extendK, methods, k]);
+        },
+    };
 }
 
 function extendK(bob, methods, k) {
     return [k, makeBob(bob, methods)];
 }
 
-function makeSelflessMethod(e, env) {
+function makeSelflessMethod(e, _, env) {
     return function(_, bob, k) {
-        return evaluate(e, env, k);
+        return e.evaluate(env, k);
     };
 }
 
@@ -70,6 +80,6 @@ function makeSelfishMethod(e, name, env) {
     return function(_, bob, k) {
         var newEnv = Object.create(env);
         newEnv[name] = bob;
-        return evaluate(e, newEnv, k);
+        return e.evaluate(newEnv, k);
     };
 }
