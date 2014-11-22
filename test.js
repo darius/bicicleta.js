@@ -12,6 +12,13 @@ function topLevelEval(text) {
                       false);
 }
 
+function compiledRun(text) {
+    var expr = parseProgram(text)[0];
+    var code = expr.compile('null');
+    return trampoline((0, eval(code)),
+                      false);
+}
+
 var sysBob = makeBob(rootBob, {
     '$true':  function(_, me, k) { return [k, true]; },
     '$false': function(_, me, k) { return [k, false]; },
@@ -54,6 +61,8 @@ document.onkeypress = function(e) {
 
 // Benchmark
 
+var compileBench = false;
+
 function bench() {
     timeExample('fac');
     timeExample('tarai');
@@ -67,11 +76,20 @@ var badResult;
 
 function timeExample(name) {
     var expr = parseProgram(examples[name])[0];
-    var result;
-    var dt = timex(function() {
-        result = trampoline(expr.evaluate(globalEnv, null),
-                            false);
-    });
+    var result, thunk;
+    if (compileBench) {
+        var code = expr.compile('null');
+        // console.log(code);
+        thunk = function() {
+            result = trampoline((0, eval(code)), false);
+        };
+    } else {
+        thunk = function() {
+            result = trampoline(expr.evaluate(globalEnv, null),
+                                false);
+        };
+    }
+    var dt = timex(thunk);
     var expected = examples[name+'.expected'];
     if (expected !== undefined && expected !== ''+result) {
         console.log('FAILED', dt, name, '; see badResult');
