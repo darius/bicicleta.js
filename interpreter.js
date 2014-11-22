@@ -163,5 +163,5 @@ function genRepr(value) {
 }
 
 function genString(s) {
-    return '"' + s + '"'; // XXX escaping
+    return JSON.stringify(s);
 }
