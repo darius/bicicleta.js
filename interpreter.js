@@ -135,7 +135,7 @@ function genContinue(codeK, codeV) {
         var fn = codeK[0], fv = codeK[1], k = codeK[2];
         if (fn === 'extendK')
             return genContinue(k, ('makeBob(' + render(codeV)
-                                   + ', ' + render(fv)));
+                                   + ', ' + render(fv) + ')'));
         else
             return render(fn) + ('(' + render(codeV)
                                  + ', ' + render(fv)
