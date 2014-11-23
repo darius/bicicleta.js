@@ -3,6 +3,11 @@ The env is a JS object with a key for each variable in scope. The key
 is '$' + the variable's name. (The parser already adds the '$', we
 don't have to.)
 
+All the optional compiler does is remove the dispatch overhead of
+walking the AST, and turn Bicicleta variable references into JS
+variable references. There's also a tiny amount of optimization,
+in genContinue: inlining a continuation.
+
 TODO: are prototype-based objects faster?
 */
 

@@ -61,8 +61,9 @@ document.onkeypress = function(e) {
 
 // Benchmark
 
-var compileBench = false;
+var compileBench = false;       // false to interpret, true to compile.
 
+// Log to the console whether the examples work, and how long they take.
 function bench() {
     timeExample('fac');
     timeExample('tarai');

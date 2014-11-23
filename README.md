@@ -6,9 +6,13 @@ Kragen's Bicicleta now all in Javascript
 Prehistory: https://github.com/darius/ychacks/tree/master/bicicleta
 Still to port over: parts of https://github.com/darius/bicicleta.py
 
+
 ## Quick start
 
-Run `make` and open test.html.
+Run `make` and open test.html. Click Run to try things.
+
+Or open the JS console and run bench().
+
 
 ## TO DO
 
