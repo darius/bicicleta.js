@@ -3,7 +3,7 @@ function assert(claim, plaint) {
         throw new Error(plaint);
 }
 
-// The trampoline reifies execution state to avoid stack overflow and
+// The trampoline reifies execution state to avoid JS stack overflow and
 // perhaps also to help support a debugging UI. To work with this,
 // functions must be written in 'trampolined style': 
 //   function fn(argument, freeVariable, continuation) {
@@ -44,24 +44,25 @@ function assert(claim, plaint) {
 // Pass trace=true to get console logs.
 function trampoline(state, trace) {
     var k, value, fn, freeVar;
-    k = state[0], value = state[1];
     if (trace) {
-        while (k !== null) {
+        for (;;) {
+            k = state[0], value = state[1];
+            if (k === null) break;
             whatsBouncing(k, value);
             if (k.length !== 3) throw new Error("bad cont!");
             fn = k[0], freeVar = k[1], k = k[2];
             state = fn(value, freeVar, k);
-            k = state[0], value = state[1];        
         }
     } else {
-        while (k !== null) {
+        for (;;) {
+            k = state[0], value = state[1];
+            if (k === null) break;
             fn = k[0], freeVar = k[1], k = k[2];
             if (typeof(fn) !== 'function') {
                 console.log("Bad state", fn, freeVar, k);
                 throw new Error("Not a function: " + fn);
             }
             state = fn(value, freeVar, k);
-            k = state[0], value = state[1];        
         }
     }
     return value;
