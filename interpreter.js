@@ -1,7 +1,10 @@
 /*
 The env is a JS object with a key for each variable in scope. The key
 is '$' + the variable's name. (The parser already adds the '$', we
-don't have to.)
+don't have to.) (OTOH bicicleta.py represented the environment as a
+list, or maybe it was a tuple; the AST would be pre-analyzed to
+compute the lexical address of each variable reference. This was
+measured to speed up the Python; it might not be a win in JS.)
 
 All the optional compiler does is remove the dispatch overhead of
 walking the AST, and turn Bicicleta variable references into JS
@@ -115,22 +118,30 @@ function makeSelfishMethod(e, name, env) {
 
 // Compiler
 
+// Here, a 'code' variable has either a string of JS source code, or a
+// 3-tuple (code, code, code) representing the construction of a
+// continuation frame (each element to be produced by the
+// corresponding code).
+
+// Return JS source code to evaluate expr with the given continuation.
 function compile(expr, codeK) {
     if (codeK === undefined) codeK = 'null';
     return render(expr.compile(codeK));
 }
 
+// Convert a code to a JS source string.
 function render(code) {
     if (typeof(code) === 'string')
         return code;
     else {
         assert(code.length === 3);
-        return ('[' + render(code[0])
+        return ('['    + render(code[0])
                 + ', ' + render(code[1])
                 + ', ' + render(code[2]) + ']');
     }
 }
 
+// Return code to call a continuation with a value.
 function genContinue(codeK, codeV) {
     if (typeof(codeK) === 'string')
         return ('[' + codeK
@@ -142,31 +153,30 @@ function genContinue(codeK, codeV) {
             return genContinue(k, ('makeBob(' + render(codeV)
                                    + ', ' + render(fv) + ')'));
         else
-            return render(fn) + ('(' + render(codeV)
+            return render(fn) + ('('    + render(codeV)
                                  + ', ' + render(fv)
                                  + ', ' + render(k) + ')');
     }
 }
 
+// Return code to create a continuation frame.
 function genPushCont(codeFn, codeFreeVar, codeK) {
     return [codeFn, codeFreeVar, codeK];
 }
 
+// Make sure a Bicicleta name won't clash with a JS one.
 function genName(name) {
     return name + '_b';  // XXX translate non-alphanumeric names to legal JS ones too
 }
 
+// Given a primitive or root Bicicleta value, return code to produce it.
 function genRepr(value) {
     if (value === rootBob)
         return 'rootBob';
     else if (typeof(value) === 'string')
-        return genString(value);
+        return JSON.stringify(value);
     else if (typeof(value) === 'boolean' || typeof(value) === 'number')
         return ''+value;
     else
         throw new Error("Unknown literal type: " + value);
-}
-
-function genString(s) {
-    return JSON.stringify(s);
 }

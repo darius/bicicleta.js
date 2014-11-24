@@ -29,7 +29,9 @@ function assert(claim, plaint) {
 // and understand what it's waiting to do at every level. There should
 // be a finite set of possible functions that might appear in the fn
 // position, so a debugger can look one up and thereby know how to
-// present the corresponding freeVar to the user.
+// present the corresponding freeVar to the user. (Actually, since the
+// interpreter creates new method closures all the time, we don't
+// currently satisfy that condition.)
 //
 // I had some thoughts about interpreter/compiler interoperability
 // too, but I'd need to see my old notes. The goal was: compiled code
@@ -83,23 +85,29 @@ function whatsBouncing(k, value) {
 // when first computed. The slot name always has a '$' prepended, in
 // the cache, the methods table, the argument to call(), and the AST.
 // (This is of course to avoid clashing with keys used by the
-// implementation or by JS.) The root parent is null.
+// implementation or by JS.) An object inherits methods from its
+// parent, but not cached values. The root parent is null.
 //
 // (Representing primitive objects as themselves made a big difference
 // in performance for the Python version. I assume it has the same
 // advantage here.)
+//
+// TODO: try using the JS prototype for the parent, and storing the
+// cache in a '.cache' field instead. Have we tried that already?
+// Presumably not with more-realistic benchmarks.
 
 
 // Compute the given slot of a Bicicleta object, caching the result
 // unless bob is primitive. The computation takes two steps: look up
-// the method and then call it. A method is a trampolined JS
-// function(ancestor, bob, k) where ancestor is the object directly
-// holding the method definition, while bob is the 'self', the object
-// we're calling.
+// the method and then call it. A method is a trampolined JS function
+// of (ancestor, bob, k) where ancestor is the object directly holding
+// the method definition, while bob is the 'self', the object we're
+// calling.
 function call(bob, slot, k) {
     // This implementation could avoid breaking out the mirandaMethods
     // case, if the contents of mirandaMethods were added to every
-    // primitive-type methods table and to rootBob's. But it's simpler
+    // primitive-type methods-table and to rootBob's (rootBob would
+    // need to be an actual object instead of null). But it's simpler
     // and more robust to keep them in one place, albeit probably
     // slower.
     var value, ancestor, method;
@@ -156,11 +164,20 @@ function makeBob(parent, methods) {
             methods: methods};
 }
 
-function extendK(bob, methods, k) {
-    return [k, makeBob(bob, methods)];
-}
-
 var rootBob = null;
+
+
+// Miranda methods are the methods on rootBob (and on primitive values
+// too).
+
+var mirandaMethods = {
+    '$is_number': function(_, me, k) { return [k, false]; },
+    '$is_string': function(_, me, k) { return [k, false]; },
+    '$repr':      function(_, me, k) { return [k, ''+me]; }, // XXX improve me
+    '$str':       function(_, me, k) { return [k, ''+me]; }, // XXX improve me
+    '$reflective slot value':
+                  function(_, me, k) { return [k, makePrimCall(me)]; },
+};
 
 function makePrimCall(receiver) {
     // TODO use a prototype hoisting the constant receiver and
@@ -177,14 +194,11 @@ function primCallK(arg1, me, k) {
     return call(me.receiver, '$'+arg1, k);
 }
 
-var mirandaMethods = {
-    '$is_number': function(_, me, k) { return [k, false]; },
-    '$is_string': function(_, me, k) { return [k, false]; },
-    '$repr':      function(_, me, k) { return [k, ''+me]; }, // XXX improve me
-    '$str':       function(_, me, k) { return [k, ''+me]; }, // XXX improve me
-    '$reflective slot value': function(_, me, k) { return [k, makePrimCall(me)]; },
-};
 
+// Extra methods for boolean values.
+// These don't have to be primitive JS methods -- they could be
+// defined in the library instead. But this lets us do basic testing
+// before loading the standard library, and it may be faster.
 
 var pickSo = makeBob(null, {
     '$()': function(_, doing, k) { return call(doing, '$so', k); },
@@ -222,6 +236,9 @@ var primopMethods = {
     },
 };
 
+
+// Extra methods for number values.
+
 function primAddK(arg1, me, k) {
     if (typeof(arg1) !== 'number') throw new Error("Type mismatch");
     return [k, me.primval + arg1];
@@ -253,14 +270,17 @@ function primLtK(arg1, me, k)  {
 
 var numberMethods = {
     '$is_number': function(_, me, k) { return [k, true]; },
-    '$+':  makePrimopMethod(primAddK),
-    '$-':  makePrimopMethod(primSubK),
-    '$*':  makePrimopMethod(primMulK),
-    '$/':  makePrimopMethod(primDivK),
-    '$**': makePrimopMethod(primPowK),
-    '$==': makePrimopMethod(primEqK),
-    '$<':  makePrimopMethod(primLtK),
+    '$+':         makePrimopMethod(primAddK),
+    '$-':         makePrimopMethod(primSubK),
+    '$*':         makePrimopMethod(primMulK),
+    '$/':         makePrimopMethod(primDivK),
+    '$**':        makePrimopMethod(primPowK),
+    '$==':        makePrimopMethod(primEqK),
+    '$<':         makePrimopMethod(primLtK),
 };
+
+
+// Extra methods for string values.
 
 function primStringCatK(arg1, me, k) {
     if (typeof(arg1) !== 'string')
@@ -278,6 +298,8 @@ var stringMethods = {
     '$++':        makePrimopMethod(primStringCatK),
 };
 
+
+// And yay here are all the primitive types:
 var primitiveMethodTables = {
     'boolean': booleanMethods,
     'number':  numberMethods,
