@@ -31,8 +31,6 @@ var globalEnv = {'$sys': sysBob};
 //     primitives and no library.
 //   * We don't want to slow down the primitive types by extending each
 //     'real' primitive with a bob-wrapper that adds the library methods.
-// 
-// TODO: add some interpreted miranda methods too.
 
 function extendInPlace(methods, overlay) {
     // TODO: deep copy? Shallow is all we need for now.
@@ -42,6 +40,8 @@ function extendInPlace(methods, overlay) {
         methods[slot] = overlay.methods[slot];
     });
 }
+
+extendInPlace(mirandaMethods, topLevelEval(sys.miranda));
 
 extendInPlace(booleanMethods, topLevelEval(sys.bool));
 extendInPlace(numberMethods,  topLevelEval(sys.number));
