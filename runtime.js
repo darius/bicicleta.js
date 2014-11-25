@@ -37,7 +37,9 @@ function assert(claim, plaint) {
 // too, but I'd need to see my old notes. The goal was: compiled code
 // should be able to take large bounces before hitting the trampoline,
 // but transparently to the debugger: if you interrupt it, it should
-// be as if you've been interpreting all along.
+// be as if you've been interpreting all along. (Added: this new paper
+// http://www.lifl.fr/dyla14/papers/dyla14-3-Debugging_at_Full_Speed.pdf
+// addresses the same problem.)
 // 
 // Also: it'd probably be more efficient with a mutable stack instead
 // of consing up continuations; this way was just easier for me to
